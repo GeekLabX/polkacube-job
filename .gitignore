@@ -1,0 +1,58 @@
+target
+.classpath
+
+# Numerous always-ignore extensions
+*.bak
+*.patch
+*.diff
+*.err
+
+# temp file for git conflict merging
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.zip
+*.vi
+*~
+*.sass-cache
+*.tmp.html
+*.dump
+nohup.out
+
+
+# OS or Editor folders
+.DS_Store
+._*
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+*.sublime-project
+*.sublime-workspace
+nbproject
+thumbs.db
+*.iml
+.vscode
+.idea
+
+# Folders to ignore
+.hg
+.svn
+.CVS
+node_modules/
+
+# Web
+webpack-assets.json
+spring-config.properties
+
+# Rust
+**/._*
+**/.criterion/
+rls*.log
+**/wip/*.stderr
+**/target/
+**/*.rs.bk
+.wasm-binaries
