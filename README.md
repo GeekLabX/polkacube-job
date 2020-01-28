@@ -1,6 +1,9 @@
 # PolkaCube Job
 
-> Polkadot network staking monitor job. Must setup nodejs, yarn, pm2, polkadot node (kusama) and mysql database, then modify .env configuration.
+> Polkadot network staking monitor job. 
+
+## Prerequisites
+> Must setup nodejs, yarn, pm2, polkadot node (kusama) and mysql database, then modify .env configuration.
 
 ## setup polkadot node
 
