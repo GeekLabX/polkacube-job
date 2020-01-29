@@ -2,16 +2,20 @@
 
 > Polkadot network staking monitor job. 
 
-## Prerequisites
-> Must setup nodejs, yarn, pm2, polkadot node (kusama) and mysql database, then modify .env configuration.
+## Development
 
-## setup polkadot node
+### Prerequisites
+
+Must setup nodejs, yarn, pm2, polkadot node (kusama) and mysql database  
+Modify .env configuration.
+
+### Setup polkadot node
 
 ```bash
 docker run parity/polkadot --pruning "archive" --name "name on telemetry"
 ```
 
-## setup database
+### Setup database
 
 ```bash
 mysql -u root -p'your_mysql_root_password';
@@ -20,13 +24,13 @@ mysql -u root -p'your_mysql_root_password';
 > source ./sql/polkacube.sql;
 ```
 
-## build
+### Build
 
 ```bash
 yarn install
 ```
 
-## start
+### Start
 
 ```bash
 pm2 start index.js --name cube-job --no-daemon --restart-delay 10000
@@ -35,16 +39,16 @@ tail -f ~/.pm2/logs/cube-job-out.log
 tail -f ~/.pm2/logs/cube-job-error.log
 ```
 
-## stop
+### Stop
 
 ```bash
 pm2 stop [pm2 id]
 ```
 
-## The Docker Way
+## Docker Image
 
-> Run a polkadot node first.
-> Use the right configure in `.env` file
+Run a polkadot node first.  
+Modify `.env` file  
 
 ```bash
 docker build -t polkacube_job .
