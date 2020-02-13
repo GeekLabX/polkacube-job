@@ -54,3 +54,7 @@ Modify `.env` file
 docker build -t polkacube_job .
 docker run -d -v [LOG_DIR]:/root/.pm2/logs polkacube_job
 ```
+
+## License
+
+[Apache-2.0](LICENSE)
