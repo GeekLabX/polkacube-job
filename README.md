@@ -47,12 +47,41 @@ pm2 stop [pm2 id]
 
 ## Docker Image
 
-Run a polkadot node first.  
-Modify `.env` file  
+### Build A Image and Run
+
+> Run a polkadot node first.  
+> Modify `.env` file  
 
 ```bash
 docker build -t polkacube_job .
 docker run -d -v [LOG_DIR]:/root/.pm2/logs polkacube_job
+```
+
+### Using Image From Docker Hub
+
+```bash
+# Write .env file on your host
+# ==========================
+## PolkaCube Config
+DEBUG_MODE=true
+CHECK_VALIDATORS_BLOCK_INTERVAL = 30
+CHECK_TOKEN_BLOCK_INTERVAL = 30
+
+## DataBase config
+## The '127.0.0.1' direct to container host, you must change it when you run in docker.
+MYSQL_HOST=10.10.10.10
+MYSQL_PORT=3306
+MYSQL_DATABASE=polkacube
+MYSQL_USERNAME=develop
+MYSQL_PASSWORD=123456
+
+## Substrate Node Config
+## The '127.0.0.1' direct to container host, you must change it when you run in docker.
+SUBSTRATE_WS_HOST=10.10.10.10
+SUBSTRATE_WS_PORT=9944
+# ==========================
+
+docker run -d -v [LOG_DIR]:/root/.pm2/logs -v [HOST_PATH]/.env:/src/.env hashquarkio/polkacube_job
 ```
 
 ## License
