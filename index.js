@@ -72,6 +72,12 @@ async function main() {
 
         let stakingRatio = totalBond / totalIssuance;
         let inflation = 0.1;
+        let inflationForValidators;
+        if (stakingRatio <= 0.5) {
+            inflationForValidators = 0.025 + stakingRatio * (0.2 - 0.025 / 0.5);
+        } else {
+            inflationForValidators = 0.025 + (0.1 - 0.025) * (2 ** ((0.5 - stakingRatio) / 0.05));
+        }
         let lastRewardPercent = await DB.getLastRewardEventPercent();
         let inflationKsm = totalIssuance * inflation;
         let inflationKsmToValidators = lastRewardPercent ? lastRewardPercent * inflationKsm : inflationKsm;
@@ -85,7 +91,7 @@ async function main() {
             totalBond: totalBond.toString(),
             validatorsCount: validatorsCount,
             stakingRatio: stakingRatio,
-            inflation: inflation,
+            inflation: inflationForValidators,
             rewardPerValPerDay: rewardPerValPerDay,
         });
     };
