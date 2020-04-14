@@ -28,19 +28,19 @@ error: ${error}`);
 
 database.getLastRewardEventPercent = async function () {
     const [rows, fields] = await querySql(
-            `SELECT a.v/(a.v+a.t) AS percent FROM 
+        `SELECT a.v/(a.v+a.t) AS percent FROM 
                 (SELECT cast(validatorsAmount AS UNSIGNED INTEGER) AS v, 
                         cast(treasuryAmount AS UNSIGNED INTEGER) AS t
                  FROM ksm_evt_reward
                  ORDER BY height DESC 
                  LIMIT 1
-                 ) a;`);
-    return rows[0].percent;
+                 ) a;`,[]);
+    return rows[0];
 };
 
 database.getLastBlockProcessed = async function () {
     const [rows, fields] = await querySql(
-            `SELECT max(height) AS height 
+        `SELECT max(height) AS height 
                  FROM ksm_block`,
         []);
     return rows[0].height;
@@ -125,14 +125,16 @@ database.saveBlocks = async function (data) {
     let sqlInsert = `INSERT IGNORE INTO ksm_block (
                         height, 
                         hash, 
-                        authorAddr) 
+                        authorAddr,
+                        currentSession) 
                     VALUES ?;`;
     let sqlParams = [];
     for (const row of data) {
         sqlParams.push([
             row.number,
             row.hash.toHex(),
-            row.authorAddr
+            row.authorAddr,
+            row.currentSession
         ])
     }
     return await querySql(sqlInsert, sqlParams);
@@ -151,52 +153,104 @@ database.saveAuthor = async function (data) {
     return await querySql(sql, []);
 };
 
-database.saveRewardEvents = async function (header, data) {
+database.saveRewardEra = async function ( data) {
     if (data.length === 0) {
         return
     }
-    console.info(`Save staking.Reward event: #${header.number}`);
-    let sqlInsert = `INSERT IGNORE INTO ksm_evt_reward (
-                        height, 
-                        \`index\`, 
-                        validatorsAmount,
-                        treasuryAmount) 
+    let sqlInsert = `REPLACE INTO ksm_rewards_era (
+                        amount,
+                        currentEra
+                        ) 
                     VALUES ?;`;
     let sqlParams = [];
     for (const row of data) {
         sqlParams.push([
-            header.number,
-            row.index,
-            row.validatorsAmount,
-            row.treasuryAmount
+            row.eraReward,
+            row.era
         ])
     }
     return await querySql(sqlInsert, sqlParams);
 };
 
-database.saveSlashEvents = async function (header, data) {
+database.saveSlashEra = async function ( data) {
     if (data.length === 0) {
         return
     }
-    console.info(`Save staking.Slash event: #${header.number}`);
-    let sqlInsert = `INSERT IGNORE INTO ksm_evt_slash (
-                        height, 
-                        \`index\`,
-                        accountAddr,
+    let sqlInsert = `REPLACE INTO ksm_slash_era (
+                        amount, 
                         nickname,
-                        amount) 
+                        \`index\`,
+                        slashType,
+                        accountAddr,
+                        currentEra
+                        ) 
                     VALUES ?;`;
     let sqlParams = [];
     for (const row of data) {
         sqlParams.push([
-            header.number,
-            row.index,
-            row.accountAddr,
+            row.amount,
             row.nickname,
-            row.amount
+            row.index,
+            row.slashType,
+            row.accountAddr,
+            row.currentEra
         ])
     }
     return await querySql(sqlInsert, sqlParams);
+};
+
+database.getSlashEra = async function () {
+    const [rows, fields] = await querySql(
+        `select max(currentEra) era from ksm_slash_era`,
+        []);
+    return rows;
+};
+
+database.getRewardsEra = async function () {
+    const [rows, fields] = await querySql(
+        `select max(currentEra) era from ksm_rewards_era`,
+        []);
+    return rows;
+};
+
+
+
+
+
+database.getValidators = async function (currentIndex) {
+    const [rows, fields] = await querySql(
+        `select validatorAddr ,
+        totalBonded,currentEra
+        from ksm_validator 
+        where currentSession = '${currentIndex}' `,
+        []);
+    return rows;
+};
+
+database.getPointEra = async function () {
+    const [rows, fields] = await querySql(
+        `select max(currentEra) era from ksm_point_era`,
+        []);
+    return rows;
+};
+
+database.savePointEra = async function (data) {
+    let sql = `REPLACE INTO ksm_point_era (
+                            point, 
+                            totalPoint,
+                            accountAddr,
+                            currentEra) 
+                    VALUES ? ;`;
+        let sqlParams = [];
+        for (const row of data) {
+            sqlParams.push([
+                row.point,
+                row.totalPoint,
+                row.accountAddr,
+                row.currentEra
+            ])
+        }
+    return await querySql(sql, sqlParams);
 };
 
 module.exports = database;

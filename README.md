@@ -22,6 +22,8 @@ mysql -u root -p'your_mysql_root_password';
 > create database polkacube;
 > use polkacube;
 > source ./sql/polkacube.sql;
+> source ./sql/v0.1.1.sql;
+> source ./sql/v0.2.0.sql;
 ```
 
 ### Build
