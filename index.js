@@ -320,7 +320,7 @@ async function main() {
 
 
     let currentEra = await api.query.staking.activeEra();
-    let eranum = Number(currentEra.raw.get('index'));
+    let eranum = Number(currentEra.value.index);
     await Promise.all([
         dealHisReward(eranum),
         dealHisSlash(eranum),
