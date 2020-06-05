@@ -1,4 +1,4 @@
-FROM node:12.13.0-alpine
+FROM node:12-alpine
 WORKDIR /src
 COPY . .
 RUN apk update && apk add tzdata \

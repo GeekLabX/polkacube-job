@@ -6,7 +6,7 @@ CREATE TABLE `hq_polkacube`.`ksm_rewards_era` (
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_era_rewards` (`currentEra`,`amount`)
+  UNIQUE KEY `uniq_era_rewards` (`currentEra`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='验证人奖励记录表';
 
 DROP TABLE IF EXISTS `hq_polkacube`.`ksm_slash_era`;

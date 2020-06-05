@@ -189,7 +189,7 @@ database.saveSlashEra = async function ( data) {
     for (const row of data) {
         sqlParams.push([
             row.amount,
-            row.nickname,
+            row.nickName,
             row.index,
             row.slashType,
             row.accountAddr,
@@ -253,4 +253,68 @@ database.savePointEra = async function (data) {
     return await querySql(sql, sqlParams);
 };
 
+database.saveStashes = async function (header, data) {
+    console.info(`Save ksm_stashes: #${header.number}`);
+    let sqlInsert = `INSERT INTO ksm_stashes (
+                        height,
+                        currentEra,
+                        validatorAddr,
+                        validatorName
+                       )
+                    VALUES ? 
+                    ON DUPLICATE KEY UPDATE 
+                    ksm_stashes.height = VALUES(ksm_stashes.height),
+                    ksm_stashes.validatorName = VALUES(ksm_stashes.validatorName)
+                    ;`;
+    let sqlParams = [];
+    for (const row of data) {
+        sqlParams.push([
+            header.number.toNumber(),
+            row.currentEra,
+            row.validatorAddr,
+            row.validatorName
+        ]);
+    }
+    return await querySql(sqlInsert, sqlParams);
+};
+
+database.saveStakerRewardsEra = async function (data) {
+    let sqlInsert = `INSERT INTO ksm_staker_reward_era (
+                        currentEra,
+                        exposureNominating,
+                        exposureValidators,
+                        eraPoints,
+                        allValPoints,
+                        erasPrefs,
+                        eraReward
+                       )
+                    VALUES ? 
+                    ON DUPLICATE KEY UPDATE 
+                    ksm_staker_reward_era.exposureNominating = VALUES(ksm_staker_reward_era.exposureNominating),
+                    ksm_staker_reward_era.exposureValidators = VALUES(ksm_staker_reward_era.exposureValidators),
+                    ksm_staker_reward_era.eraPoints = VALUES(ksm_staker_reward_era.eraPoints),
+                    ksm_staker_reward_era.allValPoints = VALUES(ksm_staker_reward_era.allValPoints),
+                    ksm_staker_reward_era.erasPrefs = VALUES(ksm_staker_reward_era.erasPrefs),
+                    ksm_staker_reward_era.eraReward = VALUES(ksm_staker_reward_era.eraReward)
+                    ;`;
+    let sqlParams = [];
+    for (const row of data) {
+        sqlParams.push([
+            row.currentEra,
+            row.exposureNominating,
+            row.exposureValidators,
+            row.eraPoints,
+            row.allValPoints,
+            row.erasPrefs,
+            row.eraReward
+        ]);
+    }
+    return await querySql(sqlInsert, sqlParams);
+};
+database.getStakerRewardsEra = async function () {
+    const [rows, fields] = await querySql(
+        `select max(currentEra) era from ksm_staker_reward_era`,
+        []);
+    return rows;
+};
 module.exports = database;
